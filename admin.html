@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>جامعة البصرة - كلية الصيدلة | لوحة التحكم</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f9; padding: 40px; text-align: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; max-width: 800px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        .header-logos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 15px; }
+        
+        /* حجم الشعارات في لوحة التحكم */
+        .header-logos img { 
+            width: 130px; 
+            height: 130px; 
+            object-fit: contain; 
+        }
+        
+        .header-logos h2 { font-size: 20px; margin: 0; color: #0d3b66; font-weight: 700; padding: 0 10px; }
+
+        select, input, button, textarea { margin-top: 15px; padding: 12px; font-size: 15px; width: 100%; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+        .btn-telegram { background: #0088cc; }
+        .btn-telegram:hover { background: #006699; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        
+        .info { background: #e9ecef; padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; }
+        .section-divider { margin: 30px 0; border: 0; border-top: 2px dashed #cbd5e1; }
+
+        /* التنسيق الخاص بالتوقيع أسفل اليسار */
+        .powered-by {
+            position: fixed;
+            bottom: 15px;
+            left: 20px;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            direction: ltr;
+            z-index: 1000;
+        }
+        .powered-by span {
+            color: #007bff; /* اللون المغاير لاسمك */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. واجهة تسجيل الدخول -->
+    <div class="card" id="loginCard">
+        <div class="header-logos">
+            <img src="images/logoright.jpg" alt="Right Logo">
+            <h2>جامعة البصرة - كلية الصيدلة<br><small style="font-size: 14px; color: #64748b;">لوحة التحكم الإدارية</small></h2>
+            <img src="images/logoleft.png" alt="Left Logo">
+        </div>
+        
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="اسم المستخدم" required><br>
+            <input type="password" id="password" placeholder="كلمة السر" required><br>
+            <button type="submit">دخول</button>
+        </form>
+        <p id="loginMsg" style="color: red; margin-top: 15px;"></p>
+    </div>
+
+    <!-- 2. واجهة رفع الملفات والتحكم -->
+    <div class="card" id="uploadCard" style="display: none;">
+        <div class="header-logos">
+            <img src="images/logoright.jpg" alt="Right Logo">
+            <h2>جامعة البصرة - كلية الصيدلة<br><small style="font-size: 14px; color: #64748b;">رفع وتحديث نتائج الكلية</small></h2>
+            <img src="images/logoleft.png" alt="Left Logo">
+        </div>
+        
+        <div class="info">
+            <p>اختر المرحلة والكورس وقم برفع ملف الـ Excel للنتائج.</p>
+        </div>
+        
+        <form id="uploadForm">
+            <select id="stageSelect" required>
+                <option value="">-- اختر المرحلة --</option>
+                <option value="المرحلة الأولى">المرحلة الأولى</option>
+                <option value="المرحلة الثانية">المرحلة الثانية</option>
+                <option value="المرحلة الثالثة">المرحلة الثالثة</option>
+                <option value="المرحلة الرابعة">المرحلة الرابعة</option>
+                <option value="المرحلة الخامسة">المرحلة الخامسة</option>
+            </select>
+
+            <select id="termSelect" required>
+                <option value="">-- اختر الكورس --</option>
+                <option value="الكورس الأول">الكورس الأول</option>
+                <option value="الكورس الثاني">الكورس الثاني</option>
+            </select>
+
+            <input type="file" id="excelFile" accept=".xlsx, .xls" required><br>
+            <button type="submit">رفع شيت النتائج</button>
+        </form>
+
+        <h3 id="statusMsg" style="color: #007bff; margin-top: 20px;"></h3>
+
+        <!-- فاصل وإشعارات التليجرام -->
+        <hr class="section-divider">
+
+        <div style="text-align: right;">
+            <h3 style="color: #0d3b66; margin-bottom: 5px;">📢 إرسال إعلان مباشر إلى قناة التلغرام</h3>
+            <p style="font-size: 13px; color: #64748b; margin-top: 0;">يمكنك نشر أي تنويه أو إعلان للطلاب مستخدمًا البوت مباشرة من هنا.</p>
+            <textarea id="telegramMsgInput" rows="3" placeholder="اكتب نص الإعلان هنا... (مثال: تم إعلان نتائج المرحلة الثالثة)"></textarea>
+            <button type="button" class="btn-telegram" onclick="sendManualTelegramMsg()">نشر الإعلان للقناة 🚀</button>
+            <p id="tgStatusMsg" style="margin-top: 10px; font-weight: bold; text-align: center;"></p>
+        </div>
+
+        <button class="btn-danger" onclick="logout()" style="margin-top: 30px;">تسجيل الخروج</button>
+    </div>
+
+    <!-- عبارة التوقيع في الأسفل اليسار -->
+    <div class="powered-by">
+        this website powered by <span>Ph.Mohammed ibrahim</span>
+    </div>
+
+    <script>
+        // --- إعدادات بوت التليجرام ---
+        const TELEGRAM_BOT_TOKEN = "8805199096:AAFMgLALXIIdMzaRZKFtRdeuPAGTYy3tR-0";
+        const TELEGRAM_CHAT_ID = "@ph_results"; 
+
+        // دالة إرسال الرسائل عبر التليجرام
+        async function sendTelegramMessage(message) {
+            if (!TELEGRAM_CHAT_ID) return false;
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                const data = await res.json();
+                return data.ok;
+            } catch (err) {
+                console.error("فشل إرسال الإشعار عبر التليجرام:", err);
+                return false;
+            }
+        }
+
+        // دالة إرسال الإعلان اليدوي من الواجهة
+        async function sendManualTelegramMsg() {
+            const input = document.getElementById('telegramMsgInput');
+            const status = document.getElementById('tgStatusMsg');
+            const text = input.value.trim();
+
+            if (!text) {
+                status.style.color = "red";
+                status.innerText = "يرجى كتابة نص الإعلان أولاً!";
+                return;
+            }
+
+            status.style.color = "#007bff";
+            status.innerText = "جاري الإرسال إلى التليجرام...";
+
+            const formattedMsg = `📢 <b>جامعة البصرة - كلية الصيدلة</b>\n\n${text}`;
+            const success = await sendTelegramMessage(formattedMsg);
+
+            if (success) {
+                status.style.color = "green";
+                status.innerText = "تم نشر الإعلان في القناة بنجاح! 🚀";
+                input.value = "";
+            } else {
+                status.style.color = "red";
+                status.innerText = "فشل الإرسال! تأكد من إضافة البوت كـ أدمن في القناة @ph_results";
+            }
+        }
+
+        window.onload = () => {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                document.getElementById('loginCard').style.display = 'none';
+                document.getElementById('uploadCard').style.display = 'block';
+            }
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginMsg = document.getElementById('loginMsg');
+
+            try {
+                const res = await fetch('https://weak-carrots-bathe.loca.lt/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.setItem('adminToken', data.token);
+                    document.getElementById('loginCard').style.display = 'none';
+                    document.getElementById('uploadCard').style.display = 'block';
+                } else {
+                    loginMsg.innerText = data.error;
+                }
+            } catch (err) {
+                loginMsg.innerText = "تعذر الاتصال بالسيرفر!";
+            }
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const stage = document.getElementById('stageSelect').value;
+            const term = document.getElementById('termSelect').value;
+            const fileInput = document.getElementById('excelFile');
+            const statusMsg = document.getElementById('statusMsg');
+            const token = localStorage.getItem('adminToken');
+
+            const formData = new FormData();
+            formData.append('stage', stage);
+            formData.append('term', term);
+            formData.append('excelFile', fileInput.files[0]);
+
+            statusMsg.innerText = "جاري رفع ومعالجة الملف...";
+
+            try {
+                const res = await fetch('https://weak-carrots-bathe.loca.lt/api/upload-excel', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.status === 401 || res.status === 403) {
+                    alert(data.error);
+                    logout();
+                } else {
+                    statusMsg.innerText = data.message || data.error;
+                    
+                    if (res.ok) {
+                        // إرسال إشعار التليجرام التلقائي عند نجاح رفع النتائج
+                        const msg = `🎓 <b>جامعة البصرة - كلية الصيدلة</b>\n\n✅ <b>تم رفع شيت النتائج بنجاح!</b>\n📌 <b>المرحلة:</b> ${stage}\n📚 <b>الكورس:</b> ${term}\n\nيمكنكم الآن الاستعلام عن نتائجكم عبر المنصة.`;
+                        sendTelegramMessage(msg);
+                    }
+                }
+            } catch (err) {
+                statusMsg.innerText = "فشل الرفع! تأكد إن السيرفر شغال.";
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            document.getElementById('loginCard').style.display = 'block';
+            document.getElementById('uploadCard').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
