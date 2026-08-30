@@ -220,10 +220,16 @@
     </div>
 
     <script>
+        // رابط اللوكل تنل الثابت للربط مع السيرفر
+        const BASE_HOST = 'https://pharmacy-basra-results.loca.lt';
+
         // فحص وضع الصيانة فور تحميل الصفحة إشعاراً للطلاب
         window.onload = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/maintenance');
+                let res = await fetch(`${BASE_HOST}/api/maintenance`);
+                if (!res.ok) {
+                    res = await fetch('http://localhost:3000/api/maintenance');
+                }
                 const data = await res.json();
                 if (data.maintenance) {
                     showMaintenanceNotice(data.message || "المنصة تحت الصيانة حالياً لرفع النتائج");
@@ -255,7 +261,12 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:3000/api/result/${encodeURIComponent(stage)}/${encodeURIComponent(term)}/${examNumber}`);
+                let response;
+                try {
+                    response = await fetch(`${BASE_HOST}/api/result/${encodeURIComponent(stage)}/${encodeURIComponent(term)}/${examNumber}`);
+                } catch (e) {
+                    response = await fetch(`http://localhost:3000/api/result/${encodeURIComponent(stage)}/${encodeURIComponent(term)}/${examNumber}`);
+                }
                 const data = await response.json();
 
                 resultBox.style.display = "block";
