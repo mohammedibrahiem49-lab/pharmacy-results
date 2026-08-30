@@ -232,7 +232,7 @@
                 }
                 const data = await res.json();
                 if (data.maintenance) {
-                    showMaintenanceNotice(data.message || "المنصة تحت الصيانة حالياً لرفع النتائج");
+                    showMaintenanceNotice(data.message || "المنصة تحت الصيانة حالياً");
                 }
             } catch (err) {
                 console.log("تعذر الاتصال المباشر بالسيرفر لفحص الصيانة عند التحميل.");
