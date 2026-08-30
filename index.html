@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جامعة البصرة - كلية الصيدلة | البوابة الإلكترونية لنتائج الامتحانات</title>
+
+    <!-- مكتبة html2pdf لتوليد ملفات الـ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0d3b66;
+            --accent-color: #c9a227;
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            border-top: 6px solid var(--primary-color);
+        }
+
+        .college-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .header-logo {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+        }
+
+        .header-text {
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .header-text h1 {
+            margin: 3px 0;
+            font-size: 22px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .header-text p {
+            margin: 0;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-search {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-search:hover { background-color: #092c4e; }
+
+        .btn-pdf {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-pdf:hover { background-color: #059669; }
+        .btn-pdf:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+        .result-box { margin-top: 20px; display: none; text-align: right; }
+        .success { background-color: #ffffff; border: 2px solid #e2e8f0; padding: 15px; border-radius: 12px; }
+        .error { background-color: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; text-align: center; padding: 15px; border-radius: 8px; }
+
+        #pdfContent {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .pdf-header .pdf-logo { 
+            width: 90px; 
+            height: 90px; 
+            object-fit: contain; 
+        }
+        
+        .pdf-header h2 { margin: 3px 0; color: var(--primary-color); font-size: 16px; }
+        .pdf-header p { margin: 2px 0; font-size: 12px; color: #475569; }
+
+        .student-info {
+            background-color: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .info-item { margin: 6px 0; font-size: 14px; color: #1e293b; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: center; font-size: 14px; }
+        th { background-color: var(--primary-color); color: white; }
+
+        /* تنسيق عبارة الحقوق أسفل اليسار */
+        .footer-credits {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            font-size: 13px;
+            color: #64748b;
+            direction: ltr;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+
+        .footer-credits .author {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="college-header">
+            <img src="images/logoright.jpg" alt="الشعار الأيمن" class="header-logo">
+            <div class="header-text">
+                <h1>جامعة البصرة - كلية الصيدلة</h1>
+                <p>البوابة الإلكترونية لنتائج الامتحانات</p>
+            </div>
+            <img src="images/logoleft.png" alt="الشعار الأيسر" class="header-logo">
+        </div>
+
+        <select id="stageSelect">
+            <option value="">-- اختر المرحلة الدراسية --</option>
+            <option value="المرحلة الأولى">المرحلة الأولى</option>
+            <option value="المرحلة الثانية">المرحلة الثانية</option>
+            <option value="المرحلة الثالثة">المرحلة الثالثة</option>
+            <option value="المرحلة الرابعة">المرحلة الرابعة</option>
+            <option value="المرحلة الخامسة">المرحلة الخامسة</option>
+        </select>
+
+        <select id="termSelect">
+            <option value="">-- اختر الكورس الدراسي --</option>
+            <option value="الكورس الأول">الكورس الأول</option>
+            <option value="الكورس الثاني">الكورس الثاني</option>
+        </select>
+
+        <input type="text" id="examNumber" placeholder="أدخل الرقم الامتحاني الخاص بك">
+        <button class="btn-search" onclick="searchResult()">استعلام عن النتيجة</button>
+
+        <div id="resultBox" class="result-box"></div>
+    </div>
+
+    <!-- النص المضاف أسفل اليسار -->
+    <div class="footer-credits">
+        this website powered by <span class="author">Ph.Mohammed ibrahim</span>
+    </div>
+
+    <script>
+        // فحص وضع الصيانة فور تحميل الصفحة إشعاراً للطلاب
+        window.onload = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/api/maintenance');
+                const data = await res.json();
+                if (data.maintenance) {
+                    showMaintenanceNotice(data.message || "المنصة تحت الصيانة حالياً لرفع النتائج");
+                }
+            } catch (err) {
+                console.log("تعذر الاتصال المباشر بالسيرفر لفحص الصيانة عند التحميل.");
+            }
+        };
+
+        function showMaintenanceNotice(msg) {
+            const resultBox = document.getElementById('resultBox');
+            resultBox.style.display = "block";
+            resultBox.className = "result-box error";
+            resultBox.innerHTML = `
+                <h3 style="margin-top: 0; color: #991b1b; font-size: 18px;">🛠️ تنبيه صيانة</h3>
+                <p style="font-size: 15px; font-weight: bold; margin-bottom: 0;">${msg || "المنصة تحت الصيانة حالياً لرفع النتائج"}</p>
+            `;
+        }
+
+        async function searchResult() {
+            const stage = document.getElementById('stageSelect').value;
+            const term = document.getElementById('termSelect').value;
+            const examNumber = document.getElementById('examNumber').value.trim();
+            const resultBox = document.getElementById('resultBox');
+
+            if (!stage || !term || !examNumber) {
+                alert("يرجى اختيار المرحلة والكورس وكتابة الرقم الامتحاني!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/result/${encodeURIComponent(stage)}/${encodeURIComponent(term)}/${examNumber}`);
+                const data = await response.json();
+
+                resultBox.style.display = "block";
+
+                // التعامل مع وضع الصيانة
+                if (response.status === 503 || data.maintenance) {
+                    showMaintenanceNotice(data.message || "المنصة تحت الصيانة حالياً لرفع النتائج");
+                } else if (response.status === 404) {
+                    resultBox.className = "result-box error";
+                    resultBox.innerHTML = `<p style="margin:0; font-weight:bold;">${data.message}</p>`;
+                } else if (data.student && data.student.is_blocked === 'نعم') {
+                    // حالة الطالب المحجوب
+                    resultBox.className = "result-box error";
+                    resultBox.innerHTML = `
+                        <h3 style="margin-top: 0; color: #991b1b; font-size: 18px;">⚠️ النتيجة محجوبة</h3>
+                        <p style="font-size: 15px; font-weight: bold; margin-bottom: 0;">يرجى مراجعة إدارة الكلية / العمادة لرفع الحجب.</p>
+                    `;
+                } else {
+                    // حالة الطالب غير المحجوب
+                    resultBox.className = "result-box success";
+                    
+                    let tableRows = '';
+                    data.grades.forEach(g => {
+                        tableRows += `<tr><td>${g.subject_name}</td><td>${g.grade_value}</td></tr>`;
+                    });
+
+                    resultBox.innerHTML = `
+                        <div id="pdfContent">
+                            <div class="pdf-header">
+                                <img src="images/logoright.jpg" class="pdf-logo" alt="Logo Right">
+                                <div style="text-align: center;">
+                                    <h2>جامعة البصرة - كلية الصيدلة</h2>
+                                    <p>وثيقة إشعار نتيجة امتحانية رسمية</p>
+                                </div>
+                                <img src="images/logoleft.png" class="pdf-logo" alt="Logo Left">
+                            </div>
+
+                            <div class="student-info">
+                                <p class="info-item"><strong>اسم الطالب:</strong> <span id="studentName">${data.student.full_name}</span></p>
+                                <p class="info-item"><strong>الرقم الامتحاني:</strong> <span id="studentExamNum">${data.student.exam_number}</span></p>
+                                <p class="info-item"><strong>المرحلة والكورس:</strong> <span id="studentStageTerm">${data.student.stage} - ${data.student.term}</span></p>
+                            </div>
+
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>المادة الدراسية</th>
+                                        <th>التقدير / الدرجة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn-pdf" onclick="downloadPDF()">📄 تحميل الوثيقة الرسمية (PDF)</button>
+                    `;
+                }
+            } catch (err) {
+                alert("حدث خطأ بالاتصال بالسيرفر، تأكد إن السيرفر شغال!");
+            }
+        }
+
+        async function downloadPDF() {
+            const element = document.getElementById('pdfContent');
+            const studentName = document.getElementById('studentName').innerText.trim() || 'الطالب';
+            const btn = document.querySelector('.btn-pdf');
+
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `نتيجة_${studentName}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    allowTaint: true,
+                    logging: false,
+                    scrollX: 0,
+                    scrollY: 0
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                const originalText = btn.innerText;
+                btn.innerText = "⏳ جاري إعداد ملف الـ PDF...";
+                btn.disabled = true;
+
+                await html2pdf().set(opt).from(element).save();
+
+                btn.innerText = originalText;
+                btn.disabled = false;
+            } catch (error) {
+                console.error("خطأ أثناء تحويل الملف إلى PDF:", error);
+                alert("حدث خطأ أثناء تحميل الملف، يرجى المحاولة مرة أخرى.");
+                btn.innerText = "📄 تحميل الوثيقة الرسمية (PDF)";
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
